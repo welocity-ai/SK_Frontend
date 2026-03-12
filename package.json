@@ -13,7 +13,7 @@
     "framer-motion": "^12.23.26",
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.303.0",
-    "next": "^14",
+    "next": "^16.1.6",
     "react": "^18",
     "react-dom": "^18",
     "tailwind-merge": "^3.4.0"
