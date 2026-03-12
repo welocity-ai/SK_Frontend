@@ -3,31 +3,9 @@
  */
 
 import { HistoryResponse, StatsResponse, SearchResponse } from '@/types/history';
+import { CertificateAnalysisResponse } from '@/types';
 
 const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-
-export interface CertificateAnalysisResponse {
-  filename: string;
-  final_verdict: string;
-  extraction: {
-    candidate_name: string;
-    issuer: string;
-    course_name?: string;
-    completion_date?: string;
-    certificate_id?: string;
-  };
-  verification: {
-    is_verified: boolean;
-    confidence: number;
-    method: string;
-    details: string;
-  };
-  forensics: {
-    is_manipulated: boolean;
-    manipulation_score: number;
-    anomalies: string[];
-  };
-}
 
 /**
  * Upload and verify a certificate
@@ -64,21 +42,21 @@ function convertToFrontendFormat(backendData: any): CertificateAnalysisResponse 
     final_verdict: backendData.data?.final_verdict || (verification.is_verified ? 'VERIFIED' : 'UNVERIFIED'),
     extraction: {
       candidate_name: extractedData.student_name || 'Unknown',
-      issuer: extractedData.issuer || 'Unknown',
+      issuer_name: extractedData.issuer || 'Unknown',
       course_name: extractedData.course_name,
       completion_date: extractedData.completion_date,
       certificate_id: extractedData.certificate_ids?.[0],
+      issuer_url: verification.verification_url,
     },
     verification: {
       is_verified: verification.is_verified || false,
-      confidence: verification.confidence_score || 0,
-      method: verification.method || 'unknown',
-      details: verification.message || 'No details available',
+      message: verification.message || 'No details available',
+      trusted_domain: verification.trusted_domain || false,
     },
     forensics: {
-      is_manipulated: forensics.is_high_risk || false,
+      is_high_risk: forensics.is_high_risk || false,
       manipulation_score: forensics.manipulation_score || 0,
-      anomalies: forensics.anomalies_detected || [],
+      status: forensics.status || 'Success',
     },
   };
 }
@@ -132,6 +110,48 @@ export const historyService = {
   searchHistory,
 };
 
+/**
+ * Manually verify a certificate using ID and URL
+ */
+export async function manualVerify(params: { certificate_id: string; issuer_url: string }): Promise<CertificateAnalysisResponse> {
+  const response = await fetch(`${API_BASE_URL}/api/v1/verify/manual`, {
+    method: 'POST',
+    headers: {
+      'Content-Type': 'application/json',
+    },
+    body: JSON.stringify(params),
+  });
+
+  if (!response.ok) {
+    throw new Error(`Manual verification failed: ${response.statusText}`);
+  }
+
+  const data = await response.json();
+  
+  // Wrap simple verification result into a full analysis response for the UI
+  return {
+    filename: 'Manual Entry',
+    final_verdict: data.is_verified ? 'VERIFIED' : 'UNVERIFIED',
+    extraction: {
+      candidate_name: 'Manual Verification',
+      issuer_name: 'User Input',
+      certificate_id: params.certificate_id,
+      issuer_url: params.issuer_url,
+    },
+    verification: {
+      is_verified: data.is_verified,
+      message: data.message,
+      trusted_domain: data.trusted_domain,
+    },
+    forensics: {
+      is_high_risk: false,
+      manipulation_score: 0,
+      status: 'Manual verification skip forensics',
+    },
+  };
+}
+
 export const verificationService = {
   uploadCertificate,
+  manualVerify,
 };

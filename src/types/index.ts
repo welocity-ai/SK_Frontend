@@ -19,6 +19,8 @@ export interface ExtractionResult {
     issuer_org?: string | null;
     raw_text_snippet?: string | null;
     certificate_date?: string | null;
+    course_name?: string | null;
+    completion_date?: string | null;
 }
 
 export interface VerificationResult {

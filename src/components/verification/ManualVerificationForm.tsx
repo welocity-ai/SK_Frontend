@@ -54,7 +54,7 @@ export default function ManualVerificationForm({ onVerificationComplete }: Manua
           <div>
             <h3 className="font-bold text-gray-900 text-lg">Manual Verification Required</h3>
             <p className="text-slate-600 mt-1 leading-relaxed">
-              We couldn't automatically verify this certificate. Please enter the details manually below.
+              We couldn&apos;t automatically verify this certificate. Please enter the details manually below.
             </p>
           </div>
         </div>
