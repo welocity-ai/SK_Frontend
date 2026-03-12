@@ -1,5 +1,13 @@
-/** @type {import('next').NextConfig} */
 const nextConfig = {
+  turbopack: {},
+  env: {
+    NEXT_PUBLIC_DIDIT_APP_ID: process.env.NEXT_PUBLIC_DIDIT_APP_ID,
+    NEXT_PUBLIC_DIDIT_WORKFLOW_ID: process.env.NEXT_PUBLIC_DIDIT_WORKFLOW_ID,
+    NEXT_PUBLIC_DIDIT_REDIRECT_URI: process.env.NEXT_PUBLIC_DIDIT_REDIRECT_URI,
+    NEXT_PUBLIC_APP_URL: process.env.NEXT_PUBLIC_APP_URL,
+    NEXT_PUBLIC_API_URL: process.env.NEXT_PUBLIC_API_URL,
+  },
+
   webpack(config) {
     // Exclude svg from Next's default loader
     const fileLoaderRule = config.module.rules.find(
@@ -22,4 +30,4 @@ const nextConfig = {
   },
 }
 
-export default nextConfig
+export default nextConfig;
