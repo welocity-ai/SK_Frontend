@@ -108,6 +108,7 @@ function CertificateContent() {
             
             {/* QR Code */}
             <div className="bg-white p-3 rounded-xl shadow-lg mb-6 transform hover:scale-105 transition-transform duration-300">
+              {/* eslint-disable-next-line @next/next/no-img-element */}
               <img 
                 src={qrCodeUrl}
                 alt="Verification QR Code" 

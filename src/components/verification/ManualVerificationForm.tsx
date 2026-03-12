@@ -77,7 +77,7 @@ export default function ManualVerificationForm({ onVerificationComplete, onClose
               <div className={onClose ? "pr-6" : ""}>
                 <h3 className="font-bold text-gray-900 text-lg">Manual verification required</h3>
                 <p className="text-slate-600 mt-1 leading-relaxed text-sm">
-                  we couldn't automatically verify this certificate. Please enter the details manually below
+                  we couldn&apos;t automatically verify this certificate. Please enter the details manually below
                 </p>
               </div>
             </div>
