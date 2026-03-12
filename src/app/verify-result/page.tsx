@@ -1,7 +1,6 @@
 'use client';
 
 import React, { useEffect, useState } from 'react';
-import { useRouter } from 'next/navigation';
 import Link from 'next/link';
 import Navbar from '@/components/ui/Navbar';
 import VerifiedCertificate from '@/components/verification/VerifiedCertificate';
@@ -11,7 +10,6 @@ import { Loader2, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { CertificateAnalysisResponse } from '@/types';
 
 export default function VerifyResultPage() {
-  const router = useRouter();
   const [result, setResult] = useState<CertificateAnalysisResponse | null>(null);
   const [isLoading, setIsLoading] = useState(true);
   const [showManualForm, setShowManualForm] = useState(false);
@@ -121,7 +119,10 @@ export default function VerifyResultPage() {
         {/* Render appropriate component based on verification status */}
         {showManualForm ? (
           <div>
-            <ManualVerificationForm onVerificationComplete={handleManualVerificationComplete} />
+            <ManualVerificationForm
+              onVerificationComplete={handleManualVerificationComplete}
+              onClose={() => setShowManualForm(false)}
+            />
           </div>
         ) : (
           <div>
