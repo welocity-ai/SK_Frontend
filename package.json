@@ -14,8 +14,8 @@
     "lottie-react": "^2.4.1",
     "lucide-react": "^0.303.0",
     "next": "^16.1.6",
-    "react": "^18",
-    "react-dom": "^18",
+    "react": "^19",
+    "react-dom": "^19",
     "tailwind-merge": "^3.4.0"
   },
   "devDependencies": {
