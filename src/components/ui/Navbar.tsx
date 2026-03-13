@@ -92,6 +92,18 @@ export default function Navbar() {
             >
               Verify
             </Link>
+            <Link
+              href="/#about"
+              className="text-sm font-medium text-slate-700 hover:text-orange-500 transition-colors"
+            >
+              About
+            </Link>
+            <Link
+              href="/#contact"
+              className="text-sm font-medium text-slate-700 hover:text-orange-500 transition-colors"
+            >
+              Contact
+            </Link>
             
             {isAuthenticated ? (
               <div className="flex items-center space-x-6">

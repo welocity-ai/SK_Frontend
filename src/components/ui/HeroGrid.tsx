@@ -83,7 +83,7 @@ export const HeroGrid: React.FC<HeroGridProps> = ({ onVerifyClick }) => {
             className="text-5xl md:text-7xl font-bold tracking-tight text-slate-900"
           >
             Verify Credentials with{"  "}
-            <span className="text-orange-600">
+            <span className="text-orange-500">
               Confidence
             </span>
           </motion.h1>
@@ -125,7 +125,7 @@ export const HeroGrid: React.FC<HeroGridProps> = ({ onVerifyClick }) => {
         >
           <button 
             onClick={handleScrollToUpload}
-            className="flex items-center gap-2 px-16 py-4 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-all shadow-sm hover:shadow-md hover:-translate-y-1 active:scale-95"
+            className="flex items-center gap-2 px-9 py-4 bg-orange-600 text-white font-semibold rounded-full hover:bg-orange-700 transition-all shadow-sm hover:shadow-md hover:-translate-y-1 active:scale-95"
           >
             <Upload className="w-5 h-5" />
             Verify Certificate Now
