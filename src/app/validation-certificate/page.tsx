@@ -65,8 +65,13 @@ function CertificateContent() {
     month: 'long', 
     year: 'numeric' 
   });
+  const safeString = (val: any): string => {
+    if (!val) return '';
+    if (typeof val === 'object') return Object.values(val).filter(Boolean).join(' • ');
+    return String(val);
+  };
 
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(data.extraction?.issuer_url || 'https://skillkendra.com')}`;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(safeString(data.extraction?.issuer_url) || 'https://skillkendra.org')}`;
 
   // Determine status color
   const getStatusColor = () => {
@@ -79,7 +84,7 @@ function CertificateContent() {
     <div className="bg-gray-100 min-h-screen flex items-center justify-center p-4 font-inter">
       <link href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css" rel="stylesheet" />
       <style dangerouslySetInnerHTML={{ __html: `
-        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700&display=swap');
+        @import url('https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800&display=swap');
         .font-inter {
           font-family: 'Inter', sans-serif;
         }
@@ -88,20 +93,58 @@ function CertificateContent() {
           background-image: radial-gradient(#e2e8f0 1px, transparent 1px);
           background-size: 20px 20px;
         }
+        
+        @page { size: landscape; margin: 0.5cm; }
         @media print {
-          .no-print { display: none; }
+          body { 
+            background: #f3f4f6 !important; 
+            margin: 0 !important;
+            padding: 0 !important;
+            min-height: 100vh !important;
+            display: flex !important;
+            align-items: center !important;
+            justify-content: center !important;
+          }
+          .no-print { display: none !important; }
+          .print-certificate-container {
+            width: 100% !important;
+            max-width: 1024px !important;
+            height: auto !important;
+            margin: auto !important;
+            border-radius: 1rem !important;
+            box-shadow: 0 25px 50px -12px rgba(0, 0, 0, 0.25) !important;
+            flex-direction: row !important;
+            page-break-after: avoid !important;
+            page-break-before: avoid !important;
+            page-break-inside: avoid !important;
+            break-inside: avoid !important;
+            transform: scale(0.95);
+            transform-origin: center center;
+          }
+          .print-sidebar {
+            width: 33.333333% !important;
+            flex: none !important;
+          }
+          .print-content {
+            width: 66.666667% !important;
+            flex: none !important;
+          }
+          * {
+            -webkit-print-color-adjust: exact !important;
+            print-color-adjust: exact !important;
+          }
         }
       `}} />
       
-      <div className="bg-white w-full max-w-5xl shadow-2xl rounded-2xl overflow-hidden flex flex-col md:flex-row">
+      <div className="bg-white w-full max-w-5xl shadow-2xl rounded-2xl overflow-hidden flex flex-col md:flex-row print-certificate-container">
         
         {/* LEFT SIDE: Verification Sidebar */}
-        <div className="w-full md:w-1/3 bg-slate-900 text-white p-8 flex flex-col items-center text-center relative overflow-hidden">
+        <div className="w-full md:w-1/3 bg-slate-900 text-white p-8 flex flex-col items-center text-center relative overflow-hidden print-sidebar">
           
           {/* Decorative circles */}
           <div className="absolute top-0 left-0 w-full h-full opacity-10 pointer-events-none">
-            <div className="absolute -top-24 -left-24 w-64 h-64 bg-blue-500 rounded-full blur-3xl"></div>
-            <div className="absolute bottom-0 right-0 w-64 h-64 bg-indigo-500 rounded-full blur-3xl"></div>
+            <div className="absolute -top-24 -left-24 w-64 h-64 bg-orange-500 rounded-full blur-3xl"></div>
+            <div className="absolute bottom-0 right-0 w-64 h-64 bg-amber-500 rounded-full blur-3xl"></div>
           </div>
 
           <div className="relative z-10 flex flex-col items-center w-full h-full">
@@ -123,7 +166,7 @@ function CertificateContent() {
                 <span className="font-bold tracking-wide uppercase text-sm">Official Document</span>
               </div>
               <h2 className="text-lg font-semibold text-slate-100 leading-tight">
-                Verified and Authenticated by <span className="text-blue-400">SkillKendra</span>
+                Verified and Authenticated by <span className="text-orange-400">SkillKendra</span>
               </h2>
             </div>
 
@@ -135,14 +178,14 @@ function CertificateContent() {
               <div className="group">
                 <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Date of Verification</p>
                 <p className="font-medium text-slate-100 flex items-center">
-                  <i className="far fa-calendar-check mr-2 text-blue-400"></i> {verificationDate}
+                  <i className="far fa-calendar-check mr-2 text-orange-400"></i> {verificationDate}
                 </p>
               </div>
 
               <div className="group">
                 <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Expiry Date</p>
                 <p className="font-medium text-slate-100 flex items-center">
-                  <i className="far fa-clock mr-2 text-orange-400"></i> {expiryDate}
+                  <i className="far fa-clock mr-2 text-amber-400"></i> {expiryDate}
                 </p>
               </div>
 
@@ -151,71 +194,65 @@ function CertificateContent() {
                   <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Certificate ID</p>
                   <div className="bg-slate-800 p-2 rounded border border-slate-700">
                     <p className="font-mono text-xs text-yellow-400 break-all select-all">
-                      {data.extraction.certificate_id}
+                      {safeString(data.extraction.certificate_id)}
                     </p>
                   </div>
                 </div>
               )}
 
               {data.extraction?.issuer_url && (
-                <div className="group">
+                <div className="group flex flex-col items-start w-full">
                   <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Verification URL</p>
-                  <a 
-                    href={data.extraction.issuer_url} 
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="text-blue-400 hover:text-blue-300 transition-colors flex items-center text-xs break-all"
-                  >
-                    <i className="fas fa-link mr-2 flex-shrink-0"></i> 
-                    <span className="break-all">{data.extraction.issuer_url}</span>
-                  </a>
+                  <div className="bg-slate-800 p-2 rounded border border-slate-700 w-full overflow-hidden">
+                    <a 
+                      href={safeString(data.extraction.issuer_url)} 
+                      target="_blank"
+                      rel="noopener noreferrer"
+                      className="text-orange-400 hover:text-orange-300 transition-colors flex items-center text-xs break-all"
+                    >
+                      <span className="break-all truncate w-full">{safeString(data.extraction.issuer_url)}</span>
+                    </a>
+                  </div>
                 </div>
               )}
 
               {(data.extraction?.issuer_name || data.extraction?.issuer_org) && (
-                <div className="group">
+                <div className="group flex flex-col items-start w-full">
                   <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Issuing Organization</p>
-                  <p className="text-blue-400 flex items-center">
-                    <i className="fas fa-building mr-2 text-xs"></i> 
-                    {data.extraction.issuer_name || data.extraction.issuer_org}
-                  </p>
-                </div>
-              )}
-
-              {/* Forensics Summary */}
-              {data.forensics && (
-                <div className="group">
-                  <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Forensics Analysis</p>
-                  <div className="bg-slate-800 p-2 rounded border border-slate-700">
-                    <p className={`text-xs font-medium ${data.forensics.is_high_risk ? 'text-red-400' : 'text-green-400'}`}>
-                      {data.forensics.status}
-                    </p>
-                    <p className="text-slate-300 text-xs mt-1">
-                      Manipulation Score: {(data.forensics.manipulation_score * 100).toFixed(0)}%
+                  <div className="bg-slate-800 p-2 rounded border border-slate-700 w-full overflow-hidden">
+                    <p className="font-mono text-xs text-orange-400 flex flex-col gap-1 break-words">
+                      {data.extraction.issuer_name && (
+                        <span>
+                          {safeString(data.extraction.issuer_name)}
+                        </span>
+                      )}
+                      {data.extraction.issuer_org && (
+                        <span>
+                          {safeString(data.extraction.issuer_org)}
+                        </span>
+                      )}
                     </p>
                   </div>
                 </div>
               )}
             </div>
-            
-            <div className="mt-auto pt-8 opacity-50">
-              <p className="text-xs">Secure Verification System v2.0</p>
-            </div>
           </div>
         </div>
 
         {/* RIGHT SIDE: Certificate Context */}
-        <div className="w-full md:w-2/3 bg-pattern p-8 md:p-12 flex flex-col">
+        <div className="w-full md:w-2/3 bg-pattern p-8 md:p-12 flex flex-col print-content">
           
           {/* Header */}
           <div className="flex justify-between items-start mb-12">
-            <div>
-              <h1 className="text-3xl font-bold text-slate-800 mb-2">Certificate of Verification</h1>
+            <div className="flex-1">
+              <h1 className="text-2xl md:text-2xl lg:text-[2.125rem] whitespace-nowrap font-extrabold text-slate-800 mb-2 uppercase tracking-tight">
+                CERTIFICATE OF VERIFICATION
+              </h1>
               <p className="text-slate-500">
                 This document certifies that the credential has been {data.final_verdict?.toLowerCase() || 'processed'}.
               </p>
             </div>
-            <div className="hidden sm:flex items-center justify-center w-16 h-16 bg-blue-600 text-white rounded-lg shadow-md font-bold text-2xl">
+            <div className="hidden sm:flex ml-4 flex-shrink-0 items-center justify-center w-16 h-16 bg-orange-600 text-white rounded-lg shadow-md font-bold text-2xl">
               SK
             </div>
           </div>
@@ -225,32 +262,20 @@ function CertificateContent() {
             {data.extraction?.candidate_name && (
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-1">Issued To</label>
-                <p className="text-2xl font-serif text-slate-900">{data.extraction.candidate_name}</p>
+                <p className="text-2xl font-serif text-slate-900">{safeString(data.extraction.candidate_name?.toUpperCase())}</p>
               </div>
             )}
             
             {(data.extraction?.issuer_name || data.extraction?.issuer_org) && (
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-1">Issuing Organization</label>
-                <p className="text-xl text-slate-700">
-                  {data.extraction.issuer_name || data.extraction.issuer_org}
-                </p>
-              </div>
-            )}
-
-            {data.verification?.message && (
-              <div>
-                <label className="block text-sm font-medium text-slate-400 mb-1">Verification Status</label>
-                <p className="text-base text-slate-700 leading-relaxed">{data.verification.message}</p>
-              </div>
-            )}
-
-            {/* Domain Trust Badge */}
-            {data.verification?.trusted_domain && (
-              <div className="flex items-center gap-2 text-sm">
-                <div className="flex items-center gap-1 px-3 py-1 bg-blue-100 text-blue-700 rounded-full">
-                  <i className="fas fa-shield-alt"></i>
-                  <span className="font-medium">Trusted Domain</span>
+                <div className="text-xl text-slate-700">
+                  {data.extraction.issuer_name && <p>{safeString(data.extraction.issuer_name)}</p>}
+                  {data.extraction.issuer_org && (
+                    <p className="text-lg text-slate-500 mt-1">
+                      {safeString(data.extraction.issuer_org)}
+                    </p>
+                  )}
                 </div>
               </div>
             )}
@@ -263,16 +288,13 @@ function CertificateContent() {
                 {data.final_verdict}
               </span>
             </p>
-            {data.extraction?.certificate_id && (
-              <p className="font-mono text-xs">ID: {data.extraction.certificate_id}</p>
-            )}
           </div>
 
           {/* Action Buttons */}
           <div className="flex gap-3 mt-6 no-print">
             <button 
               onClick={() => typeof window !== 'undefined' && window.print()}
-              className="flex-1 bg-blue-600 hover:bg-blue-700 text-white py-2 px-4 rounded-lg transition-colors text-sm font-medium"
+              className="flex-1 bg-orange-600 hover:bg-orange-700 text-white py-2 px-4 rounded-lg transition-colors text-sm font-medium"
             >
               <i className="fas fa-print mr-2"></i>
               Print Certificate
@@ -295,7 +317,7 @@ export default function ValidationCertificatePage() {
   return (
     <Suspense fallback={
       <div className="min-h-screen flex items-center justify-center bg-gray-100">
-        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-blue-600"></div>
+        <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-orange-600"></div>
       </div>
     }>
       <CertificateContent />
