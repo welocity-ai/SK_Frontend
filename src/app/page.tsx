@@ -4,6 +4,7 @@ import Navbar from "@/components/ui/Navbar"
 import { HeroGrid } from "@/components/ui/HeroGrid"
 import { HowItWorks } from "@/components/ui/HowItWorks"
 import { LogoCarousel, Logo } from "@/components/ui/LogoCarousel"
+import Footer from "@/components/ui/Footer"
 
 const logos: Logo[] = [
   { id: 1, name: "Udemy", src: "/logos/udemy.svg" },
@@ -15,6 +16,8 @@ const logos: Logo[] = [
   { id: 7, name: "Google", src: "/logos/google.svg" },
   { id: 8, name: "LinkedIn", src: "/logos/linkedin.svg" },
   { id: 9, name: "Oracle", src: "/logos/oracle.svg" },
+  //{id:10, name:"NPTEL", src:"/logos/nptel.svg"},
+  //{id:11, name:"HDFC", src:"/logos/hdfc.svg"}
 ]
 
 export default function LandingPage() {
@@ -74,6 +77,9 @@ export default function LandingPage() {
 
       {/* How It Works */}
       <HowItWorks />
+
+      {/* Footer */}
+      <Footer />
     </main>
   )
 }

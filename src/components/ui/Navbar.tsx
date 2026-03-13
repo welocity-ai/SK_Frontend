@@ -94,27 +94,28 @@ export default function Navbar() {
             </Link>
             
             {isAuthenticated ? (
-              <button
-                onClick={handleLogout}
-                className="text-sm font-medium text-slate-700 hover:text-orange-500 transition-colors"
-              >
-                Logout
-              </button>
+              <div className="flex items-center space-x-6">
+                <button
+                  onClick={handleLogout}
+                  className="text-sm font-medium text-slate-700 hover:text-orange-500 transition-colors"
+                >
+                  Logout
+                </button>
+                <Link
+                  href="/profile"
+                  className="px-5 py-2.5 rounded-full bg-orange-600 text-white text-sm font-semibold hover:bg-orange-700 transition-colors shadow-md hover:shadow-lg"
+                >
+                  Profile
+                </Link>
+              </div>
             ) : (
               <button
                 onClick={handleLogin}
-                className="text-sm font-medium text-slate-700 hover:text-orange-500 transition-colors"
+                className="px-5 py-2.5 rounded-full bg-orange-600 text-white text-sm font-semibold hover:bg-orange-700 transition-colors shadow-md hover:shadow-lg"
               >
                 Login
               </button>
             )}
-
-            <Link
-              href="/profile"
-              className="px-5 py-2.5 rounded-full bg-orange-600 text-white text-sm font-semibold hover:bg-orange-700 transition-colors shadow-md hover:shadow-lg"
-            >
-              Profile
-            </Link>
           </div>
 
           {/* Mobile Menu Button */}
@@ -150,33 +151,35 @@ export default function Navbar() {
             </Link>
             
             {isAuthenticated ? (
-              <button
-                onClick={() => {
-                  handleLogout();
-                  setIsOpen(false);
-                }}
-                className="block w-full text-left px-4 py-3 text-slate-700 hover:bg-slate-100 hover:text-orange-500 rounded-lg transition-colors font-medium"
-              >
-                Logout
-              </button>
+              <>
+                <button
+                  onClick={() => {
+                    handleLogout();
+                    setIsOpen(false);
+                  }}
+                  className="block w-full text-left px-4 py-3 text-slate-700 hover:bg-slate-100 hover:text-orange-500 rounded-lg transition-colors font-medium"
+                >
+                  Logout
+                </button>
+                <Link
+                  href="/profile"
+                  className="block w-full text-center px-4 py-3 bg-orange-600 text-white rounded-lg font-bold hover:bg-orange-700 transition-colors mt-2"
+                  onClick={() => setIsOpen(false)}
+                >
+                  Profile
+                </Link>
+              </>
             ) : (
               <button
                 onClick={() => {
                   handleLogin();
                   setIsOpen(false);
                 }}
-                className="block w-full text-left px-4 py-3 text-slate-700 hover:bg-slate-100 hover:text-orange-500 rounded-lg transition-colors font-medium"
+                className="block w-full text-center px-4 py-3 bg-orange-600 text-white rounded-lg font-bold hover:bg-orange-700 transition-colors mt-2"
               >
                 Login
               </button>
             )}
-            <Link
-              href="/profile"
-              className="block w-full text-center px-4 py-3 bg-orange-600 text-white rounded-lg font-bold hover:bg-orange-700 transition-colors mt-5"
-              onClick={() => setIsOpen(false)}
-            >
-              Profile
-            </Link>
           </div>
         )}
       </div>

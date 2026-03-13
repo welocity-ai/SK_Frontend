@@ -144,7 +144,7 @@ export default function UploadForm() {
             w-full mt-5 flex items-center justify-center py-3 px-4 rounded-lg font-semibold text-white transition-all
             ${!file || isUploading
               ? 'bg-slate-300 cursor-not-allowed'
-              : 'bg-orange-600 hover:bg-orange-700 shadow-md hover:shadow-lg active:scale-95'
+              : 'bg-orange-600 hover:bg-orange-700 shadow-md hover:shadow-lg hover:-translate-y-1 active:scale-95'
             }
           `}
         >

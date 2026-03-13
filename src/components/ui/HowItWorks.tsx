@@ -49,7 +49,7 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({
       icon: <Upload className="h-6 w-6" />,
       title: "Upload Certificate",
       description:
-        "Upload your certificate as PDF or image. Our system supports all major certificate formats.",
+        "Upload your certificate as PDF or Image. Our system supports all major certificate formats.",
       benefits: [
         "Drag & drop or click to upload",
         "Supports PDF, PNG, JPG formats",
@@ -74,7 +74,7 @@ export const HowItWorks: React.FC<HowItWorksProps> = ({
         "Receive instant verification results with detailed analysis and authenticity status.",
       benefits: [
         "Instant results in under 10 seconds",
-        "98% accuracy rate",
+        "95% accuracy rate",
         "Detailed forensics report",
       ],
     },

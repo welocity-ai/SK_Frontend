@@ -6,6 +6,7 @@ import {
   useMotionTemplate, 
   useAnimationFrame 
 } from "framer-motion";
+import { Upload } from "lucide-react";
 
 interface HeroGridProps {
   onVerifyClick?: () => void;
@@ -124,9 +125,10 @@ export const HeroGrid: React.FC<HeroGridProps> = ({ onVerifyClick }) => {
         >
           <button 
             onClick={handleScrollToUpload}
-            className="px-16 py-4 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-all shadow-sm hover:shadow-md active:scale-95"
+            className="flex items-center gap-2 px-16 py-4 bg-orange-600 text-white font-semibold rounded-lg hover:bg-orange-700 transition-all shadow-sm hover:shadow-md hover:-translate-y-1 active:scale-95"
           >
-            Verify Certificate
+            <Upload className="w-5 h-5" />
+            Verify Certificate Now
           </button>
           
         </motion.div>
@@ -139,7 +141,7 @@ export const HeroGrid: React.FC<HeroGridProps> = ({ onVerifyClick }) => {
           className="flex flex-wrap gap-10 justify-center text-sm pt-6 text-slate-500"
         >
           <div className="flex flex-col items-center gap-1">
-            <div className="text-3xl font-bold text-slate-900">99%</div>
+            <div className="text-3xl font-bold text-slate-900">95%</div>
             <div>Accuracy</div>
           </div>
           <div className="flex flex-col items-center gap-1">
