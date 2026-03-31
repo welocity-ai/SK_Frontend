@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from 'next/server';
-import jwt from "jsonwebtoken";
+import * as jwt from "jsonwebtoken";
 
 const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'MySuperSecretCode';
 const COOKIE_NAME = 'skillkendra_session';
