@@ -1,6 +1,7 @@
 import React from 'react';
 import Link from 'next/link';
-import { ShieldCheck, Twitter, Linkedin, Github, Mail } from 'lucide-react';
+import Image from 'next/image';
+import { Twitter, Linkedin, Github, Mail } from 'lucide-react';
 
 export default function Footer() {
   const currentYear = new Date().getFullYear();
@@ -12,9 +13,7 @@ export default function Footer() {
           {/* Brand Col */}
           <div className="md:col-span-1 space-y-4">
             <Link href="/" className="flex items-center gap-2 group inline-flex">
-              <div className="bg-orange-600 p-1.5 rounded-lg group-hover:bg-orange-500 transition-colors">
-                <ShieldCheck className="w-6 h-6 text-white" />
-              </div>
+              <Image src="/sklogo.png" alt="SkillKendra Logo" width={48} height={48} className="h-12 w-auto" />
               <span className="text-xl font-bold tracking-tight text-slate-900">
                 SKILL<span className="text-orange-600">KENDRA</span>
               </span>

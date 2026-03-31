@@ -1,157 +1,185 @@
 /**
- * API Service for certificate verification
+ * API Service for SkillKendra Frontend
+ * Centralized methods for interacting with the integrated Next.js backend.
  */
-
-import { HistoryResponse, StatsResponse, SearchResponse } from '@/types/history';
-import { CertificateAnalysisResponse } from '@/types';
-
-const API_BASE_URL = process.env.NEXT_PUBLIC_API_URL || 'http://localhost:8000';
-
-/**
- * Upload and verify a certificate
- */
-export async function uploadCertificate(file: File): Promise<CertificateAnalysisResponse> {
-  const formData = new FormData();
-  formData.append('file', file);
-
-  const response = await fetch(`${API_BASE_URL}/api/v1/verify`, {
-    method: 'POST',
-    body: formData,
-  });
-
-  if (!response.ok) {
-    throw new Error(`Verification failed: ${response.statusText}`);
-  }
-
-  const data = await response.json();
-  
-  // Convert backend format to frontend format
-  return convertToFrontendFormat(data);
-}
-
-/**
- * Convert backend response to frontend format
- */
-function convertToFrontendFormat(backendData: any): CertificateAnalysisResponse {
-  const extractedData = backendData.data?.extracted_data || {};
-  const verification = backendData.data?.verification || {};
-  const forensics = backendData.data?.forensics || {};
-
-  return {
-    filename: backendData.filename || 'unknown',
-    final_verdict: backendData.data?.final_verdict || (verification.is_verified ? 'VERIFIED' : 'UNVERIFIED'),
-    extraction: {
-      candidate_name: extractedData.student_name || 'Unknown',
-      issuer_name: extractedData.issuer || 'Unknown',
-      course_name: extractedData.course_name,
-      completion_date: extractedData.completion_date,
-      certificate_id: extractedData.certificate_ids?.[0],
-      issuer_url: verification.verification_url,
-    },
-    verification: {
-      is_verified: verification.is_verified || false,
-      message: verification.message || 'No details available',
-      trusted_domain: verification.trusted_domain || false,
-    },
-    forensics: {
-      is_high_risk: forensics.is_high_risk || false,
-      manipulation_score: forensics.manipulation_score || 0,
-      status: forensics.status || 'Success',
-    },
-  };
-}
-
-// ===== HISTORY SERVICE =====
-
-/**
- * Get recent verification activity
- */
-async function getRecentActivity(limit: number = 10): Promise<HistoryResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/history?limit=${limit}`);
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch recent activity');
-  }
-  
-  return response.json();
-}
-
-/**
- * Get verification statistics
- */
-async function getVerificationStats(): Promise<StatsResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/history/stats`);
-  
-  if (!response.ok) {
-    throw new Error('Failed to fetch verification stats');
-  }
-  
-  return response.json();
-}
-
-/**
- * Search verification history
- */
-async function searchHistory(query: string, limit: number = 20): Promise<SearchResponse> {
-  const response = await fetch(
-    `${API_BASE_URL}/api/v1/history/search?q=${encodeURIComponent(query)}&limit=${limit}`
-  );
-  
-  if (!response.ok) {
-    throw new Error('Failed to search history');
-  }
-  
-  return response.json();
-}
-
-export const historyService = {
-  getRecentActivity,
-  getVerificationStats,
-  searchHistory,
-};
-
-/**
- * Manually verify a certificate using ID and URL
- */
-export async function manualVerify(params: { certificate_id: string; issuer_url: string }): Promise<CertificateAnalysisResponse> {
-  const response = await fetch(`${API_BASE_URL}/api/v1/verify/manual`, {
-    method: 'POST',
-    headers: {
-      'Content-Type': 'application/json',
-    },
-    body: JSON.stringify(params),
-  });
-
-  if (!response.ok) {
-    throw new Error(`Manual verification failed: ${response.statusText}`);
-  }
-
-  const data = await response.json();
-  
-  // Wrap simple verification result into a full analysis response for the UI
-  return {
-    filename: 'Manual Entry',
-    final_verdict: data.is_verified ? 'VERIFIED' : 'UNVERIFIED',
-    extraction: {
-      candidate_name: 'Manual Verification',
-      issuer_name: 'User Input',
-      certificate_id: params.certificate_id,
-      issuer_url: params.issuer_url,
-    },
-    verification: {
-      is_verified: data.is_verified,
-      message: data.message,
-      trusted_domain: data.trusted_domain,
-    },
-    forensics: {
-      is_high_risk: false,
-      manipulation_score: 0,
-      status: 'Manual verification skip forensics',
-    },
-  };
-}
 
 export const verificationService = {
-  uploadCertificate,
-  manualVerify,
+  // --- Verification ---
+  async verifyCertificate(file: File) {
+    const formData = new FormData();
+    formData.append('file', file);
+    
+    const response = await fetch('/api/verify', {
+      method: 'POST',
+      body: formData,
+    });
+    return response.json();
+  },
+
+  // Manual verification bridge
+  async manualVerify(data: { certificate_id: string; issuer_url: string }) {
+    const response = await fetch('/api/verify/manual', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  // Alias for backward compatibility if needed
+  async uploadCertificate(file: File) {
+    return this.verifyCertificate(file);
+  },
+
+  // --- History ---
+  async getRecentActivity(limit = 10, offset = 0) {
+    const response = await fetch(`/api/history?limit=${limit}&offset=${offset}`);
+    return response.json();
+  },
+
+  async getStats() {
+    const response = await fetch('/api/history/stats');
+    return response.json();
+  },
+
+  async searchHistory(query: string, limit = 20) {
+    const response = await fetch(`/api/history/search?q=${encodeURIComponent(query)}&limit=${limit}`);
+    return response.json();
+  },
+
+  // --- Candidates ---
+  async createCandidate(data: { candidate_name: string; email?: string; phone_number?: string }) {
+    const response = await fetch('/api/candidates', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  async getCandidate(id: string | number) {
+    const response = await fetch(`/api/candidates/${id}`);
+    return response.json();
+  },
+
+  async getCandidateCertificates(id: string | number, limit = 10) {
+    const response = await fetch(`/api/candidates/${id}/certificates?limit=${limit}`);
+    return response.json();
+  },
+
+  async getCandidateStats(id: string | number) {
+    const response = await fetch(`/api/candidates/${id}/stats`);
+    return response.json();
+  },
+
+  // --- KYC ---
+  async getKYCSession(sessionId: string) {
+    const response = await fetch(`/api/kyc?session_id=${sessionId}`);
+    return response.json();
+  },
+
+  async createKYCSession(data: any) {
+    const response = await fetch('/api/kyc', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  // --- Auth ---
+  async getSession() {
+    const response = await fetch('/api/auth/session');
+    return response.json();
+  },
+
+  async logout() {
+    const response = await fetch('/api/auth/logout', { method: 'POST' });
+    return response.json();
+  }
 };
+
+/**
+ * History Service for SkillKendra Frontend
+ * Backward compatibility for components using historyService
+ */
+export const historyService = {
+  getRecentActivity: (limit?: number, offset?: number) => verificationService.getRecentActivity(limit, offset),
+  getVerificationStats: () => verificationService.getStats(),
+  searchHistory: (query: string, limit?: number) => verificationService.searchHistory(query, limit)
+};
+
+/**
+ * KYC Service for SkillKendra Frontend
+ * Specific methods for KYC identity verification
+ */
+export const kycService = {
+  /**
+   * Initialize a DigiLocker session
+   */
+  async initDigilocker(data: { 
+    doc_types: string[]; 
+    redirect_url: string; 
+    encrypted_id: string; 
+    candidateName: string;
+    candidateEmail?: string;
+    candidatePhone?: string;
+  }) {
+    const response = await fetch('/api/kyc/init', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({
+        candidate_id: data.encrypted_id,
+        doc_types: data.doc_types,
+        redirect_url: data.redirect_url,
+        candidateName: data.candidateName,
+        candidateEmail: data.candidateEmail,
+        candidatePhone: data.candidatePhone
+      }),
+    });
+    return response.json();
+  },
+
+  /**
+   * Get candidate data from a KYC session status
+   */
+  async getKYCCandidate(sessionId: string) {
+    const response = await fetch(`/api/kyc/status/${sessionId}`);
+    return response.json();
+  },
+
+  /**
+   * Fetch session details directly (for legacy or internal checks)
+   */
+  async getSession(sessionId: string) {
+    const response = await fetch(`/api/kyc?session_id=${sessionId}`);
+    return response.json();
+  },
+
+  /**
+   * Generate Aadhaar OTP
+   */
+  async generateAadhaarOtp(data: { aadhaar_number: string; session_id: string }) {
+    const response = await fetch('/api/aadhaar/generate-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  },
+
+  /**
+   * Verify Aadhaar OTP
+   */
+  async verifyAadhaarOtp(data: { reference_id: string; otp: string; session_id: string }) {
+    const response = await fetch('/api/aadhaar/verify-otp', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify(data),
+    });
+    return response.json();
+  }
+};
+
+// Also export as default for flexibility
+export default verificationService;

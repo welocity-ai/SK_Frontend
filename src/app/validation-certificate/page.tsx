@@ -54,6 +54,11 @@ function CertificateContent() {
     );
   }
 
+  // Resolve from new nested shape (data.data.extracted_data) or legacy (data.extraction)
+  const extraction = data.data?.extracted_data || data.extraction;
+  const verification = data.data?.verification || data.verification;
+  const finalVerdict = data.final_verdict || (verification?.is_verified ? 'VERIFIED' : 'UNVERIFIED');
+
   const verificationDate = new Date().toLocaleDateString('en-US', { 
     day: 'numeric', 
     month: 'long', 
@@ -71,12 +76,13 @@ function CertificateContent() {
     return String(val);
   };
 
-  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(safeString(data.extraction?.issuer_url) || 'https://skillkendra.org')}`;
+  const verificationUrl = extraction?.issuer_url || data.data?.verification?.verification_url;
+  const qrCodeUrl = `https://api.qrserver.com/v1/create-qr-code/?size=160x160&data=${encodeURIComponent(safeString(verificationUrl) || 'https://skillkendra.org')}`;
 
   // Determine status color
   const getStatusColor = () => {
-    if (data?.final_verdict === 'VERIFIED') return 'text-emerald-600 bg-emerald-100';
-    if (data?.final_verdict === 'UNVERIFIED') return 'text-yellow-600 bg-yellow-100';
+    if (finalVerdict === 'VERIFIED') return 'text-emerald-600 bg-emerald-100';
+    if (finalVerdict === 'UNVERIFIED') return 'text-yellow-600 bg-yellow-100';
     return 'text-red-600 bg-red-100';
   };
 
@@ -189,47 +195,43 @@ function CertificateContent() {
                 </p>
               </div>
 
-              {data.extraction?.certificate_id && (
+              {extraction?.certificate_id && (
                 <div className="group">
                   <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Certificate ID</p>
                   <div className="bg-slate-800 p-2 rounded border border-slate-700">
                     <p className="font-mono text-xs text-yellow-400 break-all select-all">
-                      {safeString(data.extraction.certificate_id)}
+                      {safeString(extraction.certificate_id)}
                     </p>
                   </div>
                 </div>
               )}
 
-              {data.extraction?.issuer_url && (
+              {(extraction?.issuer_url || data.data?.verification?.verification_url) && (
                 <div className="group flex flex-col items-start w-full">
                   <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Verification URL</p>
                   <div className="bg-slate-800 p-2 rounded border border-slate-700 w-full overflow-hidden">
                     <a 
-                      href={safeString(data.extraction.issuer_url)} 
+                      href={safeString(verificationUrl)} 
                       target="_blank"
                       rel="noopener noreferrer"
                       className="text-orange-400 hover:text-orange-300 transition-colors flex items-center text-xs break-all"
                     >
-                      <span className="break-all truncate w-full">{safeString(data.extraction.issuer_url)}</span>
+                      <span className="break-all truncate w-full">{safeString(verificationUrl)}</span>
                     </a>
                   </div>
                 </div>
               )}
 
-              {(data.extraction?.issuer_name || data.extraction?.issuer_org) && (
+              {(extraction?.issuer_name || extraction?.issuer_org) && (
                 <div className="group flex flex-col items-start w-full">
                   <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Issuing Organization</p>
                   <div className="bg-slate-800 p-2 rounded border border-slate-700 w-full overflow-hidden">
                     <p className="font-mono text-xs text-orange-400 flex flex-col gap-1 break-words">
-                      {data.extraction.issuer_name && (
-                        <span>
-                          {safeString(data.extraction.issuer_name)}
-                        </span>
+                      {extraction.issuer_name && (
+                        <span>{safeString(extraction.issuer_name)}</span>
                       )}
-                      {data.extraction.issuer_org && (
-                        <span>
-                          {safeString(data.extraction.issuer_org)}
-                        </span>
+                      {extraction.issuer_org && (
+                        <span>{safeString(extraction.issuer_org)}</span>
                       )}
                     </p>
                   </div>
@@ -249,34 +251,43 @@ function CertificateContent() {
                 CERTIFICATE OF VERIFICATION
               </h1>
               <p className="text-slate-500">
-                This document certifies that the credential has been {data.final_verdict?.toLowerCase() || 'processed'}.
+                This document certifies that the credential has been {finalVerdict?.toLowerCase() || 'processed'}.
               </p>
             </div>
-            <div className="hidden sm:flex ml-4 flex-shrink-0 items-center justify-center w-16 h-16 bg-orange-600 text-white rounded-lg shadow-md font-bold text-2xl">
-              SK
+            <div className="hidden sm:flex ml-4 flex-shrink-0 items-center justify-center w-32 h-16 p-2 bg-white border border-slate-100 rounded-lg shadow-sm">
+              <img src="/sklogo.png" alt="SkillKendra Logo" className="w-full h-full object-contain" />
             </div>
           </div>
 
           {/* Certificate Details */}
           <div className="space-y-6 mb-12">
-            {data.extraction?.candidate_name && (
+            {extraction?.candidate_name && (
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-1">Issued To</label>
-                <p className="text-2xl font-serif text-slate-900">{safeString(data.extraction.candidate_name?.toUpperCase())}</p>
+                <p className="text-2xl font-serif text-slate-900">{safeString(extraction.candidate_name?.toUpperCase())}</p>
               </div>
             )}
             
-            {(data.extraction?.issuer_name || data.extraction?.issuer_org) && (
+            {(extraction?.issuer_name || extraction?.issuer_org) && (
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-1">Issuing Organization</label>
                 <div className="text-xl text-slate-700">
-                  {data.extraction.issuer_name && <p>{safeString(data.extraction.issuer_name)}</p>}
-                  {data.extraction.issuer_org && (
+                  {extraction.issuer_name && <p>{safeString(extraction.issuer_name)}</p>}
+                  {extraction.issuer_org && (
                     <p className="text-lg text-slate-500 mt-1">
-                      {safeString(data.extraction.issuer_org)}
+                      {safeString(extraction.issuer_org)}
                     </p>
                   )}
                 </div>
+              </div>
+            )}
+
+            {(extraction?.certificate_id || (extraction as any)?.certificate_ids?.[0]) && (
+              <div>
+                <label className="block text-sm font-medium text-slate-400 mb-1">Certificate ID</label>
+                <p className="text-xl font-mono text-slate-700">
+                  {safeString(extraction.certificate_id || (extraction as any).certificate_ids[0])}
+                </p>
               </div>
             )}
           </div>
@@ -285,7 +296,7 @@ function CertificateContent() {
           <div className="mt-auto border-t border-slate-200 pt-6 flex flex-col sm:flex-row justify-between items-center text-sm text-slate-500 gap-4">
             <p>
               Status: <span className={`font-bold px-2 py-0.5 rounded ${getStatusColor()}`}>
-                {data.final_verdict}
+                {finalVerdict}
               </span>
             </p>
           </div>

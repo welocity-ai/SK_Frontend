@@ -9,7 +9,9 @@ interface VerifiedCertificateProps {
 }
 
 export default function VerifiedCertificate({ data }: VerifiedCertificateProps) {
-  
+  // Resolve extraction from new nested shape (data.data.extracted_data) or legacy (data.extraction)
+  const extraction = data.data?.extracted_data || data.extraction;
+
   const handleViewCertificate = () => {
     // Encode data as Base64 and open in new tab
     const jsonString = JSON.stringify(data);
@@ -56,51 +58,53 @@ export default function VerifiedCertificate({ data }: VerifiedCertificateProps) 
       <div className="bg-white rounded-xl shadow-lg border border-gray-100 p-6 space-y-6">
         
         {/* Candidate Info */}
-        {data.extraction.candidate_name && (
+        {extraction?.candidate_name && (
           <div className="flex items-start gap-3">
             <User className="w-5 h-5 text-blue-600 mt-1" />
             <div>
               <p className="text-sm text-gray-500 font-medium">Candidate Name</p>
-              <p className="text-lg font-semibold text-gray-900">{data.extraction.candidate_name.toUpperCase()}</p>
+              <p className="text-lg font-semibold text-gray-900">{extraction.candidate_name.toUpperCase()}</p>
             </div>
           </div>
         )}
 
         {/* Certificate ID */}
-        {data.extraction.certificate_id && (
+        {(extraction?.certificate_id || (extraction as any)?.certificate_ids?.[0]) && (
           <div className="flex items-start gap-3">
             <Hash className="w-5 h-5 text-blue-600 mt-1" />
             <div>
               <p className="text-sm text-gray-500 font-medium">Certificate ID</p>
-              <p className="text-lg font-mono text-gray-900">{data.extraction.certificate_id}</p>
+              <p className="text-lg font-mono text-gray-900">
+                {extraction.certificate_id || (extraction as any).certificate_ids[0]}
+              </p>
             </div>
           </div>
         )}
 
         {/* Issuer Organization */}
-        {data.extraction.issuer_org && (
+        {(extraction?.issuer_org || extraction?.issuer_name) && (
           <div className="flex items-start gap-3">
             <Building className="w-5 h-5 text-blue-600 mt-1" />
             <div>
               <p className="text-sm text-gray-500 font-medium">Issuing Organization</p>
-              <p className="text-lg font-semibold text-gray-900">{data.extraction.issuer_org}</p>
+              <p className="text-lg font-semibold text-gray-900">{extraction?.issuer_org || extraction?.issuer_name}</p>
             </div>
           </div>
         )}
 
         {/* Verification URL */}
-        {data.extraction.issuer_url && (
+        {(extraction?.issuer_url || data.data?.verification?.verification_url) && (
           <div className="flex items-start gap-3">
             <LinkIcon className="w-5 h-5 text-blue-600 mt-1" />
             <div className="flex-1">
               <p className="text-sm text-gray-500 font-medium">Verification URL</p>
               <a 
-                href={data.extraction.issuer_url} 
+                href={extraction?.issuer_url || data.data?.verification?.verification_url} 
                 target="_blank" 
                 rel="noopener noreferrer"
                 className="text-blue-600 hover:text-blue-700 underline break-all"
               >
-                {data.extraction.issuer_url}
+                {extraction?.issuer_url || data.data?.verification?.verification_url}
               </a>
             </div>
           </div>

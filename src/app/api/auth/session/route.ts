@@ -1,0 +1,41 @@
+import { NextRequest, NextResponse } from 'next/server';
+import jwt from 'jsonwebtoken';
+
+const JWT_SECRET_KEY = process.env.JWT_SECRET_KEY || 'default-secret-key-change-this';
+const COOKIE_NAME = 'skillkendra_session';
+
+export async function GET(req: NextRequest) {
+  const token = req.cookies.get(COOKIE_NAME)?.value;
+
+  if (!token) {
+    return NextResponse.json({
+      authenticated: false,
+      user: null
+    });
+  }
+
+  try {
+    const payload: any = jwt.verify(token, JWT_SECRET_KEY);
+    
+    // Mock user data for demo
+    const userData = {
+      ...payload,
+      kyc: false,
+      candidate_id: 1,
+      candidate_name: "Demo Candidate"
+    };
+
+    return NextResponse.json({
+      authenticated: true,
+      user: userData,
+      verification_status: 'pending',
+      expires_at: new Date(payload.exp * 1000).toISOString()
+    });
+
+  } catch (error) {
+    return NextResponse.json({
+      authenticated: false,
+      user: null
+    });
+  }
+}

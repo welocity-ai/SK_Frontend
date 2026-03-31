@@ -2,7 +2,7 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Navbar from '@/components/ui/Navbar';
+import Navbar from '@/components/shared/ui/Navbar';
 import { 
   ArrowLeft, 
   CheckCircle, 
@@ -70,6 +70,26 @@ export default function RecentActivityPage() {
       hour: '2-digit',
       minute: '2-digit'
     });
+  };
+
+  const getRelativeTime = (timestamp: string) => {
+    const now = new Date();
+    const past = new Date(timestamp);
+    const diffInSeconds = Math.floor((now.getTime() - past.getTime()) / 1000);
+
+    if (diffInSeconds < 60) return 'Just now';
+    
+    const diffInMinutes = Math.floor(diffInSeconds / 60);
+    if (diffInMinutes < 60) return `${diffInMinutes} minute${diffInMinutes > 1 ? 's' : ''} ago`;
+    
+    const diffInHours = Math.floor(diffInMinutes / 60);
+    if (diffInHours < 24) return `${diffInHours} hour${diffInHours > 1 ? 's' : ''} ago`;
+    
+    const diffInDays = Math.floor(diffInHours / 24);
+    if (diffInDays < 30) return `${diffInDays} day${diffInDays > 1 ? 's' : ''} ago`;
+    
+    const diffInMonths = Math.floor(diffInDays / 30);
+    return `${diffInMonths} month${diffInMonths > 1 ? 's' : ''} ago`;
   };
 
   if (loading) {
@@ -192,6 +212,9 @@ export default function RecentActivityPage() {
                     Status
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    Validation Certificate
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                     Student
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
@@ -199,6 +222,9 @@ export default function RecentActivityPage() {
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                     Course
+                  </th>
+                  <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
+                    Activity
                   </th>
                   <th className="px-6 py-4 text-left text-xs font-semibold text-slate-600 uppercase tracking-wider">
                     Date
@@ -211,7 +237,7 @@ export default function RecentActivityPage() {
               <tbody className="divide-y divide-slate-200">
                 {history.length === 0 ? (
                   <tr>
-                    <td colSpan={6} className="px-6 py-12 text-center text-slate-500">
+                    <td colSpan={8} className="px-6 py-12 text-center text-slate-500">
                       No verification history found
                     </td>
                   </tr>
@@ -221,14 +247,27 @@ export default function RecentActivityPage() {
                       <td className="px-6 py-4 whitespace-nowrap">
                         <div className="flex items-center gap-2">
                           {record.is_verified ? (
-                            <CheckCircle className="w-5 h-5 text-green-600" />
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-green-100 text-green-800">
+                              <CheckCircle className="w-3.5 h-3.5" /> Verified
+                            </span>
                           ) : (
-                            <XCircle className="w-5 h-5 text-red-600" />
-                          )}
-                          {record.is_high_risk && (
-                            <AlertTriangle className="w-5 h-5 text-orange-600" />
+                            <span className="inline-flex items-center gap-1.5 px-2.5 py-0.5 rounded-full text-xs font-medium bg-red-100 text-red-800">
+                              <XCircle className="w-3.5 h-3.5" /> Failed
+                            </span>
                           )}
                         </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        {record.is_verified && (
+                          <a 
+                            href={record.validation_certificate_link || '#'} 
+                            target="_blank" 
+                            rel="noopener noreferrer"
+                            className="text-blue-600 hover:text-blue-800 font-bold text-sm transition-colors"
+                          >
+                            Download
+                          </a>
+                        )}
                       </td>
                       <td className="px-6 py-4">
                         <div className="text-sm font-medium text-slate-900">
@@ -246,6 +285,11 @@ export default function RecentActivityPage() {
                       <td className="px-6 py-4 max-w-xs">
                         <div className="text-sm text-slate-900 truncate">
                           {record.course_name || 'N/A'}
+                        </div>
+                      </td>
+                      <td className="px-6 py-4 whitespace-nowrap">
+                        <div className="text-sm text-slate-500 italic">
+                          {getRelativeTime(record.timestamp)}
                         </div>
                       </td>
                       <td className="px-6 py-4 whitespace-nowrap">

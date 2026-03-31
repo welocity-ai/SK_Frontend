@@ -1,6 +1,6 @@
 import React from 'react';
-import Navbar from '@/components/ui/Navbar';
-import UserProfile from '@/components/profile/UserProfile';
+import Navbar from '@/components/shared/ui/Navbar';
+import UserProfile from '@/components/features/profile/UserProfile';
 
 export default function ProfilePage() {
     return (

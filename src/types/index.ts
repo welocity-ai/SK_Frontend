@@ -30,11 +30,21 @@ export interface VerificationResult {
 }
 
 export interface CertificateAnalysisResponse {
+    success?: boolean;
     filename: string;
-    final_verdict: string;
-    forensics: ForensicsResult;
-    extraction: ExtractionResult;
-    verification: VerificationResult;
+    // New backend shape: all results nested under `data`
+    data?: {
+        verification?: VerificationResult & { confidence_score?: number; verification_url?: string; method?: string; message?: string };
+        extracted_data?: ExtractionResult;
+        forensics?: ForensicsResult;
+        summary?: { final_message?: string; verified_count?: number; [key: string]: any };
+        [key: string]: any;
+    };
+    // Legacy / flat shape (kept for compatibility)
+    final_verdict?: string;
+    forensics?: ForensicsResult;
+    extraction?: ExtractionResult;
+    verification?: VerificationResult;
 }
 
 // Manual Verification Types

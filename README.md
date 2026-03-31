@@ -38,23 +38,26 @@ frontend/
 
 ### Prerequisites
 
-- Node.js 18+ 
+- Node.js 18+
 - npm or yarn
 
 ### Installation
 
 1. Install dependencies:
+
 ```bash
 npm install
 ```
 
 2. Configure environment variables:
-Create a `.env.local` file with:
+   Create a `.env.local` file with:
+
 ```env
 NEXT_PUBLIC_API_URL=http://localhost:8000
 ```
 
 3. Run the development server:
+
 ```bash
 npm run dev
 ```
@@ -70,10 +73,11 @@ npm run dev
 
 ## 🔌 API Integration
 
-The frontend communicates with the FastAPI backend via the service layer in `src/services/api.ts`. 
+The frontend communicates with the FastAPI backend via the service layer in `src/services/api.ts`.
 
 Current endpoint:
-- **POST** `/api/v1/verify` - Upload certificate for verification
+
+- **POST** `/api/verify` - Upload certificate for verification
 
 ## 🎨 Design System
 
@@ -84,22 +88,25 @@ Current endpoint:
 
 ## 🔒 Environment Variables
 
-| Variable | Description | Default |
-|----------|-------------|---------|
+| Variable              | Description     | Default                 |
+| --------------------- | --------------- | ----------------------- |
 | `NEXT_PUBLIC_API_URL` | Backend API URL | `http://localhost:8000` |
 
 ## 📦 Dependencies
 
 ### Core
+
 - `next` - React framework
 - `react` & `react-dom` - React library
 - `typescript` - Type safety
 
 ### UI
+
 - `tailwindcss` - Utility-first CSS framework
 - `lucide-react` - Icon library
 
 ### Dev Tools
+
 - `eslint` - Code linting
 - `autoprefixer` - CSS vendor prefixes
 - `postcss` - CSS processing
@@ -107,6 +114,7 @@ Current endpoint:
 ## 🏗️ Architecture
 
 This frontend follows a **monorepo sibling architecture**, designed to be:
+
 - **Decoupled**: Independent from backend implementation details
 - **Scalable**: Clean separation of concerns
 - **Type-safe**: Full TypeScript coverage
@@ -115,3 +123,4 @@ This frontend follows a **monorepo sibling architecture**, designed to be:
 ## 📄 License
 
 Part of the SkillKendra platform.
+-- uvicorn src.api.main:app --reload

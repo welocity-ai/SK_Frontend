@@ -2,10 +2,10 @@
 
 import React, { useEffect, useState } from 'react';
 import Link from 'next/link';
-import Navbar from '@/components/ui/Navbar';
-import VerifiedCertificate from '@/components/verification/VerifiedCertificate';
-import ManualVerificationForm from '@/components/verification/ManualVerificationForm';
-import CertificateNotFound from '@/components/verification/CertificateNotFound';
+import Navbar from '@/components/shared/ui/Navbar';
+import VerifiedCertificate from '@/components/features/verification/VerifiedCertificate';
+import ManualVerificationForm from '@/components/features/verification/ManualVerificationForm';
+import CertificateNotFound from '@/components/features/verification/CertificateNotFound';
 import { Loader2, ArrowLeft, AlertTriangle } from 'lucide-react';
 import { CertificateAnalysisResponse } from '@/types';
 
@@ -30,10 +30,10 @@ export default function VerifyResultPage() {
         setResult(parsedResult);
         
         // Determine if manual verification is needed
-        const needsManualVerification = 
-          parsedResult.final_verdict === 'UNVERIFIED' || 
-          parsedResult.final_verdict.includes('FLAGGED') ||
-          !parsedResult.verification.is_verified;
+        // Backend response shape: { success, filename, data: { verification: { is_verified }, summary: { final_message } } }
+        const verification = parsedResult.data?.verification || parsedResult.verification;
+        const isVerified = verification?.is_verified === true;
+        const needsManualVerification = !isVerified;
         
         setShowManualForm(needsManualVerification);
       } catch (error) {
@@ -126,17 +126,11 @@ export default function VerifyResultPage() {
           </div>
         ) : (
           <div>
-            {result.verification.is_verified ? (
+            {(result.data?.verification?.is_verified || result.verification?.is_verified) ? (
                 <VerifiedCertificate data={result} />
             ) : (
                 <CertificateNotFound />
             )}
-            
-            {/* Option to try manual verification - Only show if Verified (to allow re-verify?) or maybe just hide if not found? 
-                Actually if Not Found, CertificateNotFound page has "Try Again" which reloads. 
-                If Verified, we might not need this button anymore. 
-                But let's keep it consistent with request: "if verified -> verified page", "if not -> not found page".
-            */}
           </div>
         )}
       </div>

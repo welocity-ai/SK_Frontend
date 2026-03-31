@@ -1,5 +1,5 @@
 /**
- * Types for verification history
+ * Types for verification history — matches skillkendra PostgreSQL schema
  */
 
 export interface HistoryRecord {
@@ -8,13 +8,15 @@ export interface HistoryRecord {
   filename: string | null;
   student_name: string | null;
   issuer: string | null;
-  course_name: string | null;
+  course_name?: string | null;
+  issue_date?: string | null;
+  validation_certificate_link?: string | null;
   certificate_id: string | null;
   is_verified: boolean;
-  verification_method: string | null;
+  verification_method?: string | null;
   confidence_score: number | null;
-  is_high_risk: boolean;
-  manipulation_score: number | null;
+  is_high_risk?: boolean;
+  manipulation_score?: number | null;
   verification_url: string | null;
 }
 
