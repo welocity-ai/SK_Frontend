@@ -200,7 +200,7 @@ function CertificateContent() {
                   <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Certificate ID</p>
                   <div className="bg-slate-800 p-2 rounded border border-slate-700">
                     <p className="font-mono text-xs text-yellow-400 break-all select-all">
-                      {safeString(extraction.certificate_id)}
+                      {safeString(extraction?.certificate_id)}
                     </p>
                   </div>
                 </div>
@@ -227,11 +227,11 @@ function CertificateContent() {
                   <p className="text-slate-400 text-xs uppercase tracking-wider mb-1">Issuing Organization</p>
                   <div className="bg-slate-800 p-2 rounded border border-slate-700 w-full overflow-hidden">
                     <p className="font-mono text-xs text-orange-400 flex flex-col gap-1 break-words">
-                      {extraction.issuer_name && (
-                        <span>{safeString(extraction.issuer_name)}</span>
+                      {extraction?.issuer_name && (
+                        <span>{safeString(extraction?.issuer_name)}</span>
                       )}
-                      {extraction.issuer_org && (
-                        <span>{safeString(extraction.issuer_org)}</span>
+                      {extraction?.issuer_org && (
+                        <span>{safeString(extraction?.issuer_org)}</span>
                       )}
                     </p>
                   </div>
@@ -264,7 +264,7 @@ function CertificateContent() {
             {extraction?.candidate_name && (
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-1">Issued To</label>
-                <p className="text-2xl font-serif text-slate-900">{safeString(extraction.candidate_name?.toUpperCase())}</p>
+                <p className="text-2xl font-serif text-slate-900">{safeString(extraction?.candidate_name?.toUpperCase())}</p>
               </div>
             )}
             
@@ -272,10 +272,10 @@ function CertificateContent() {
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-1">Issuing Organization</label>
                 <div className="text-xl text-slate-700">
-                  {extraction.issuer_name && <p>{safeString(extraction.issuer_name)}</p>}
-                  {extraction.issuer_org && (
+                  {extraction?.issuer_name && <p>{safeString(extraction?.issuer_name)}</p>}
+                  {extraction?.issuer_org && (
                     <p className="text-lg text-slate-500 mt-1">
-                      {safeString(extraction.issuer_org)}
+                      {safeString(extraction?.issuer_org)}
                     </p>
                   )}
                 </div>
@@ -286,7 +286,7 @@ function CertificateContent() {
               <div>
                 <label className="block text-sm font-medium text-slate-400 mb-1">Certificate ID</label>
                 <p className="text-xl font-mono text-slate-700">
-                  {safeString(extraction.certificate_id || (extraction as any).certificate_ids[0])}
+                  {safeString(extraction?.certificate_id || (extraction as any)?.certificate_ids?.[0])}
                 </p>
               </div>
             )}

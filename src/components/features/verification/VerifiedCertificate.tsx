@@ -63,7 +63,7 @@ export default function VerifiedCertificate({ data }: VerifiedCertificateProps) 
             <User className="w-5 h-5 text-blue-600 mt-1" />
             <div>
               <p className="text-sm text-gray-500 font-medium">Candidate Name</p>
-              <p className="text-lg font-semibold text-gray-900">{extraction.candidate_name.toUpperCase()}</p>
+              <p className="text-lg font-semibold text-gray-900">{extraction?.candidate_name?.toUpperCase()}</p>
             </div>
           </div>
         )}
@@ -75,7 +75,7 @@ export default function VerifiedCertificate({ data }: VerifiedCertificateProps) 
             <div>
               <p className="text-sm text-gray-500 font-medium">Certificate ID</p>
               <p className="text-lg font-mono text-gray-900">
-                {extraction.certificate_id || (extraction as any).certificate_ids[0]}
+                {extraction?.certificate_id || (extraction as any)?.certificate_ids?.[0]}
               </p>
             </div>
           </div>
