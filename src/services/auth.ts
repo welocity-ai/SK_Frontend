@@ -45,6 +45,30 @@ export async function getSession(): Promise<SessionData | null> {
 }
 
 /**
+ * Handle verification callback
+ * Sends verification results to backend
+ */
+export async function handleCallback(sessionId: string, status: string): Promise<any> {
+  try {
+    const response = await fetch(`${API_BASE_URL}/auth/callback`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+      },
+      body: JSON.stringify({
+        verification_session_id: sessionId,
+        status: status,
+      }),
+    });
+
+    return await response.json();
+  } catch (error) {
+    console.error('Error handling callback:', error);
+    return { success: false, message: 'Network error occurred' };
+  }
+}
+
+/**
  * Logout user
  * Clears session and cookie
  */

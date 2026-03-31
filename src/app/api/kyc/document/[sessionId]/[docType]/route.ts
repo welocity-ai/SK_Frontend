@@ -7,10 +7,10 @@ const API_BASE = process.env.SANDBOX_API_BASE || 'https://api.sandbox.co.in';
 
 export async function GET(
     req: NextRequest,
-    { params }: { params: { sessionId: string; docType: string } }
+    { params }: { params: Promise<{ sessionId: string; docType: string }> }
 ) {
     try {
-        const { sessionId, docType } = params;
+        const { sessionId, docType } = await params;
         const accessToken = await getAccessToken();
         
         // Map doc type for Sandbox API
